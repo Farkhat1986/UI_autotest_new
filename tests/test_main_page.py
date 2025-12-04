@@ -1,7 +1,14 @@
-from locators.locators import CursesLocators
+import allure
+
+from locators.main_page_locator import MainPageLocators
 
 
+@allure.epic("Главная страница сайта")
+@allure.feature("Проверка UI-элементов")
 class TestMainPage:
+
+    @allure.story("Проверка видимости основных структурных элементов при загрузке страницы")
+    @allure.severity(allure.severity_level.CRITICAL)
     def test_main_page_elements_visibility(self, main_page):
         """Проверка открытия страницы и отображения основных элементов"""
         main_page.open()
@@ -16,6 +23,10 @@ class TestMainPage:
         assert main_page.is_courses_section_visible(), "Секция курсов не отображается"
         assert main_page.is_footer_visible(), "Футер не отображается"
 
+    @allure.story(
+        "Проверка контактной информации в шапке (телефоны, email, Skype, ссылки на соцсети)"
+    )
+    @allure.severity(allure.severity_level.NORMAL)
     def test_header_contact_info(self, main_page):
         """Проверка хедера с контактной информацией"""
         main_page.open()
@@ -25,11 +36,14 @@ class TestMainPage:
         assert main_page.is_email_link_present(), "Ссылка на email не найдена"
         assert main_page.get_social_links_count(), "Ссылки на соцсети не найдены"
 
+    @allure.story("Проверка навигации в слайдере курсов: переключение слайдов работает")
+    @allure.severity(allure.severity_level.NORMAL)
     def test_courses_slider_navigation(self, main_page):
         """Проверка кнопок навигации слайдера курсов"""
         main_page.open()
+        self.locators = MainPageLocators()
 
-        main_page.scroll_to_element_el(CursesLocators.POPULAR_COURSES_SECTION)
+        main_page.scroll_to_element_el(self.locators.POPULAR_COURSES_SECTION)
 
         initial_slides = main_page.get_active_course_slides()
 
@@ -51,10 +65,12 @@ class TestMainPage:
             initial_slides != slides_after_prev
         ), "Слайды не изменились после клика 'вперед'"
 
+    @allure.story("Проверка кликабельности кнопок слайдера курсов без ошибок")
+    @allure.severity(allure.severity_level.MINOR)
     def test_courses_slider_navigation_click_only(self, main_page):
         """Проверка, что кнопки навигации слайдера кликабельны и не вызывают ошибок"""
         main_page.open()
-        main_page.scroll_to_element(CursesLocators.POPULAR_COURSES_SECTION)
+        main_page.scroll_to_element(self.locators.POPULAR_COURSES_SECTION)
 
         main_page.click_course_slider_next()
 
@@ -62,6 +78,8 @@ class TestMainPage:
 
         assert True
 
+    @allure.story("Проверка содержимого футера (адрес, телефоны, email-адреса)")
+    @allure.severity(allure.severity_level.NORMAL)
     def test_footer_content(self, main_page):
         """Проверка содержания футера"""
         main_page.open()

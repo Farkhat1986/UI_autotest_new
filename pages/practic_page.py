@@ -1,22 +1,53 @@
-from locators.locators import PracticLocators
+import allure
+from selenium.webdriver.remote.webdriver import WebDriver
+
+from config import BASE_URL
+from locators.practic_page_locator import PracticPageLocators
 from pages.base_page import BasePage
 
 
 class PracticPage(BasePage):
-    URL = "https://www.way2automation.com/"
+    """Страница для навигации к демо-разделу 'Resizable' на Practice Site 1"""
 
-    def open(self):
-        self.driver.get(self.URL)
+    URL = f"{BASE_URL}"
+
+    def __init__(self, driver: WebDriver) -> None:
+        """Инициализирует страницу
+
+        Args:
+            driver (WebDriver): экземпляр Selenium WebDriver
+        """
+        super().__init__(driver)
+        self.locator = PracticPageLocators()
+
+    @allure.step("Открыть главную страницу сайта")
+    def open(self) -> "PracticPage":
+        """Открывает главную страницу
+
+        Returns:
+            PracticPage: текущий экземпляр страницы для цепочки вызовов
+        """
+        self.open_url(self.URL)
         return self
 
-    def practic_test(self):
-        all_courses = self.find_element(PracticLocators.RESOURCES)
-        self.driver.execute_script(
+    @allure.step("Перейти в Practice Site 1  затем демо 'Resizable'")
+    def practic_test(self) -> None:
+        """Выполняет навигацию к демо-примеру 'Resizable' через меню сайта
+
+        Последовательность действий:
+        1. Наводится на пункт меню 'Resources' с помощью mouseover
+        2. Кликает по 'Resources'
+        3. Переходит в 'Practice Site 1'
+        4. Кликает по кнопке навигации 'Button'
+        5. Выбирает подпункт 'Resizable'
+        """
+        resources_menu = self.find_element(self.locator.RESOURCES)
+        self.execute_script(
             "arguments[0].dispatchEvent(new MouseEvent('mouseover', {bubbles: true}));",
-            all_courses,
+            resources_menu,
         )
 
-        self.click(PracticLocators.RESOURCES)
-        self.click(PracticLocators.PRACTICE_SITE_1)
-        self.click(PracticLocators.BUTTON)
-        self.click(PracticLocators.BUTTON_RESIZABLE)
+        self.click(self.locator.RESOURCES)
+        self.click(self.locator.PRACTICE_SITE_1)
+        self.click(self.locator.BUTTON)
+        self.click(self.locator.BUTTON_RESIZABLE)

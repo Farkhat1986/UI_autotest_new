@@ -1,6 +1,9 @@
+import allure
 import pytest
 
 
+@allure.epic("Банковское приложение")
+@allure.feature("Регистрация через Sample Form")
 class TestBanking:
     @pytest.fixture
     def user_data(self):
@@ -11,6 +14,8 @@ class TestBanking:
             "password": "password",
         }
 
+    @allure.story("Пользователь заполняет все поля и успешно регистрируется")
+    @allure.severity(allure.severity_level.CRITICAL)
     def test_sample_form_registration(self, banking_page, user_data):
         """Проверка регистрации в Sample Form"""
         banking_page.open()

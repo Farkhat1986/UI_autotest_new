@@ -1,58 +1,114 @@
-from locators.locators import InputLocators, MessageLocators
+import allure
+from selenium.webdriver.remote.webdriver import WebDriver
+
+from config import BASE_URL, REGISTRATION_APP_PATH
+from locators.login_page_locator import LoginPageLocators
 
 from .base_page import BasePage
 
 
 class LoginPage(BasePage):
-    URL = "https://www.way2automation.com/angularjs-protractor/registeration/#/login"
+    """Страница входа в приложение регистрации на сайте"""
 
-    def open(self):
-        self.driver.get(self.URL)
+    URL = f"{BASE_URL}{REGISTRATION_APP_PATH}/#/login"
+
+    def __init__(self, driver: WebDriver) -> None:
+        """Инициализирует страницу входа
+
+        Args:
+            driver (WebDriver): экземпляр Selenium WebDriver
+        """
+        super().__init__(driver)
+        self.locators = LoginPageLocators()
+
+    @allure.step("Открыть страницу входа")
+    def open(self) -> "LoginPage":
+        """Открывает URL страницы входа
+
+        Returns:
+            LoginPage: текущий экземпляр страницы для цепочки вызовов
+        """
+        self.open_url(self.URL)
         return self
 
-    def is_username_field_visible(self):
-        return self.is_element_visible(InputLocators.USERNAME_INPUT)
+    @allure.step("Ввести имя пользователя: {username}")
+    def enter_username(self, username: str) -> None:
+        """Вводит имя пользователя в соответствующее поле
 
-    def is_password_field_visible(self):
-        return self.is_element_visible(InputLocators.PASSWORD_INPUT)
+        Args:
+            username (str): имя пользователя
+        """
+        self.send_keys(self.locators.USERNAME_INPUT, username)
 
-    def is_username_description_field_visible(self):
-        return self.is_element_visible(InputLocators.USERNAME_DESCRIPTION)
+    @allure.step("Ввести пароль: {'*' * len(password)}")
+    def enter_password(self, password: str) -> None:
+        """Вводит пароль
 
-    def is_login_button_disabled(self):
-        button = self.find_element(InputLocators.LOGIN_BUTTON)
-        return button.get_attribute("disabled") is not None
+        Args:
+            password (str): пароль для входа
+        """
+        self.send_keys(self.locators.PASSWORD_INPUT, password)
 
-    def enter_username(self, username):
-        self.send_keys(InputLocators.USERNAME_INPUT, username)
+    @allure.step("Ввести описание пользователя: {desc}")
+    def enter_username_description(self, desc: str) -> None:
+        """Вводит описание (комментарий) к пользователю
 
-    def enter_password(self, password):
-        self.send_keys(InputLocators.PASSWORD_INPUT, password)
+        Args:
+            desc (str): описание пользователя
+        """
+        self.send_keys(self.locators.USERNAME_DESCRIPTION, desc)
 
-    def enter_username_description(self, desc):
-        self.send_keys(InputLocators.USERNAME_DESCRIPTION, desc)
+    @allure.step("Нажать кнопку 'Login'")
+    def click_login(self) -> None:
+        """Выполняет клик по кнопке входа"""
+        self.click(self.locators.LOGIN_BUTTON)
 
-    def click_login(self):
-        self.click(InputLocators.LOGIN_BUTTON)
+    @allure.step("Получить текст сообщения об успехе")
+    def get_success_message(self) -> str:
+        """Возвращает текст сообщения об успешном входе
 
-    def get_success_message(self):
-        return self.get_text(MessageLocators.SUCCESS_MESSAGE_I)
+        Returns:
+            str: текст сообщения
+        """
+        return self.get_text(self.locators.SUCCESS_MESSAGE)
 
-    def get_error_message(self):
-        return self.get_text(MessageLocators.ERROR_MESSAGE)
+    @allure.step("Получить текст сообщения об ошибке")
+    def get_error_message(self) -> str:
+        """Возвращает текст сообщения об ошибке входа
 
-    def click_logout(self):
-        self.click(MessageLocators.LOGOUT_BUTTON)
+        Returns:
+            str: текст ошибки
+        """
+        return self.get_text(self.locators.ERROR_MESSAGE)
 
-    def login(self, username, password, desc):
+    @allure.step("Нажать кнопку 'Logout'")
+    def click_logout(self) -> None:
+        """Выполняет клик по кнопке выхода из системы"""
+        self.click(self.locators.LOGOUT_BUTTON)
+
+    @allure.step("Выполнить полный вход с username='{username}', description='{desc}'")
+    def login(self, username: str, password: str, desc: str) -> None:
+        """Выполняет полный сценарий входа: заполняет все поля и нажимает 'Login'
+
+        Args:
+            username (str): имя пользователя
+            password (str): пароль
+            desc (str): описание пользователя
+        """
         self.enter_username(username)
         self.enter_password(password)
         self.enter_username_description(desc)
         self.click_login()
 
-    def is_login_form_visible(self):
+    @allure.step("Проверить, видна ли вся форма входа")
+    def is_login_form_visible(self) -> bool:
+        """Проверяет, что все поля формы входа видны одновременно
+
+        Returns:
+            bool: True, если поле видно если нет то False
+        """
         return (
-            self.is_element_visible(InputLocators.USERNAME_INPUT)
-            and self.is_element_visible(InputLocators.PASSWORD_INPUT)
-            and self.is_element_visible(InputLocators.USERNAME_DESCRIPTION)
+            self.is_element_visible(self.locators.USERNAME_INPUT)
+            and self.is_element_visible(self.locators.PASSWORD_INPUT)
+            and self.is_element_visible(self.locators.USERNAME_DESCRIPTION)
         )

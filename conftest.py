@@ -1,61 +1,31 @@
+import allure
 import pytest
 
 from utils.driver_factory import create_driver
 
 
+@pytest.hookimpl(hookwrapper=True, tryfirst=True)
+def pytest_runtest_makereport(item, call):
+    """Определения статуса теста"""
+    outcome = yield
+    rep = outcome.get_result()
+    setattr(item, "rep_call", rep)
+
+
 @pytest.fixture
-def driver():
+def driver(request):
+    """Фикстура WebDriver с автоматическим скриншотом при падении"""
     driver = create_driver()
     yield driver
-    # attachment = driver.get_screenshot_as_png()
-    # allure.attach(attachment, name="screenshot", attachment_type=allure.attachment_type.PNG)
+
+    if hasattr(request.node, "rep_call") and request.node.rep_call.failed:
+        try:
+            allure.attach(
+                driver.get_screenshot_as_png(),
+                name="screenshot_on_failure",
+                attachment_type=allure.attachment_type.PNG,
+            )
+        except Exception as e:
+            print(f"Не удалось сделать скриншот: {e}")
+
     driver.quit()
-
-
-@pytest.fixture
-def main_page(driver):
-    from pages.main_page import MainPage
-
-    return MainPage(driver)
-
-
-@pytest.fixture
-def login_page(driver):
-    from pages.login_page import LoginPage
-
-    return LoginPage(driver)
-
-
-@pytest.fixture
-def banking_page(driver):
-    from pages.banking_page import BankingPage
-
-    return BankingPage(driver)
-
-
-@pytest.fixture
-def resurses_page(driver):
-    from pages.resurses_page import ResursesPage
-
-    return ResursesPage(driver)
-
-
-@pytest.fixture
-def site_test_page(driver):
-    from pages.site_test_page import SiteTestPage
-
-    return SiteTestPage(driver)
-
-
-@pytest.fixture
-def home_page(driver):
-    from pages.home_page import HomePage
-
-    return HomePage(driver)
-
-
-@pytest.fixture
-def practic_page(driver):
-    from pages.practic_page import PracticPage
-
-    return PracticPage(driver)

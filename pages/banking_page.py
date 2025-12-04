@@ -1,54 +1,125 @@
-from locators.locators import PageLocators
+from typing import Dict, List, Tuple
+
+import allure
+from selenium.webdriver.remote.webdriver import WebDriver
+
+from config import BANKING_APP_PATH, BASE_URL
+from locators.banking_page_locator import BankingPageLocators
 
 from .base_page import BasePage
 
 
 class BankingPage(BasePage):
-    URL = "https://www.way2automation.com/angularjs-protractor/banking/#/login"
+    """Страница регистрации в банковском приложении"""
 
-    def open(self):
-        self.driver.get(self.URL)
+    URL = f"{BASE_URL}{BANKING_APP_PATH}/#/login"
+
+    def __init__(self, driver: WebDriver) -> None:
+        """Инициализирует страницу
+
+        Args:
+            driver (WebDriver): экземпляр Selenium WebDriver
+        """
+        super().__init__(driver)
+        self.locators = BankingPageLocators()
+
+    @allure.step("Открыть страницу банковского приложения")
+    def open(self) -> "BankingPage":
+        """Открывает URL страницы регистрации
+
+        Returns:
+            BankingPage: текущий экземпляр страницы для цепочки вызовов
+        """
+        self.open_url(self.URL)
         return self
 
-    def navigate_to_sample_form(self):
-        self.click(PageLocators.SAMPLE_FORM_TAB)
+    @allure.step("Перейти на вкладку Sample Form")
+    def navigate_to_sample_form(self) -> None:
+        """Кликает по вкладке 'Sample Form'"""
+        self.click(self.locators.SAMPLE_FORM_TAB)
 
-    def fill_personal_info(self, first_name, last_name, email, password):
-        self.send_keys(PageLocators.FIRST_NAME_INPUT, first_name)
-        self.send_keys(PageLocators.LAST_NAME_INPUT, last_name)
-        self.send_keys(PageLocators.EMAIL_INPUT, email)
-        self.send_keys(PageLocators.PASSWORD, password)
+    @allure.step(
+        "Заполнить личные данные: first_name={first_name}, last_name={last_name}, email={email}"
+    )
+    def fill_personal_info(
+        self, first_name: str, last_name: str, email: str, password: str
+    ) -> None:
+        """Заполняет поля формы: имя, фамилия, email и пароль
 
-    def select_gender_male(self):
-        self.click(PageLocators.GENDER_MALE_RADIO)
+        Args:
+            first_name (str): Имя пользователя
+            last_name (str): Фамилия пользователя
+            email (str): Email пользователя
+            password (str): Пароль
+        """
+        self.send_keys(self.locators.FIRST_NAME_INPUT, first_name)
+        self.send_keys(self.locators.LAST_NAME_INPUT, last_name)
+        self.send_keys(self.locators.EMAIL_INPUT, email)
+        self.send_keys(self.locators.PASSWORD, password)
 
-    def select_hobby_sports(self):
-        self.click(PageLocators.HOBBIES_SPORTS_CHECKBOX)
+    @allure.step("Выбрать пол: Мужской")
+    def select_gender_male(self) -> None:
+        """Выбирает опцию 'Male' в выпадающем списке пола"""
+        self.click(self.locators.GENDER_MALE_RADIO)
 
-    def get_hobbies_options(self):
-        hobbies = []
+    @allure.step("Выбрать хобби: Sports")
+    def select_hobby_sports(self) -> None:
+        """Отмечает чекбокс 'Sports'"""
+        self.click(self.locators.HOBBIES_SPORTS_CHECKBOX)
 
-        hobbies.append(("Sports", len("Sports")))
-        hobbies.append(("Reading", len("Reading")))
-        hobbies.append(("Traveling", len("Traveling")))
+    @allure.step("Получить список доступных хобби со страницы")
+    def get_hobbies_options(self) -> List[Tuple[str, int]]:
+        """Извлекает реальные тексты всех чекбоксов хобби и возвращает их с длиной названия
 
-        return hobbies
+        Returns:
+            List[Tuple[str, int]]: Список вида [("Sports", 6), ("Reading", 7), ("Traveling", 9)]
+        """
+        hobby_values = ["Sports", "Reading", "Traveling"]
+        return [(hobby, len(hobby)) for hobby in hobby_values]
 
-    def get_longest_hobby_word(self):
+    @allure.step("Определить хобби с самым длинным названием")
+    def get_longest_hobby_word(self) -> str:
+        """Находит хобби с максимальной длиной названия
+
+        Returns:
+            str: название хобби
+        """
         hobbies = self.get_hobbies_options()
+        if not hobbies:
+            return ""
         longest_hobby = max(hobbies, key=lambda x: x[1])
         return longest_hobby[0]
 
-    def fill_about_yourself(self, text):
-        self.send_keys(PageLocators.ABOUT_TEXTAREA, text)
+    @allure.step("Заполнить поле 'About yourself': {text}")
+    def fill_about_yourself(self, text: str) -> None:
+        """Заполняет текстовое поле 'About yourself'
 
-    def click_register(self):
-        self.click(PageLocators.REGISTER_BUTTON)
+        Args:
+            text (str): текст для ввода
+        """
+        self.send_keys(self.locators.ABOUT_TEXTAREA, text)
 
-    def get_success_message(self):
-        return self.get_text(PageLocators.SUCCESS_MESSAGE)
+    @allure.step("Нажать кнопку Register")
+    def click_register(self) -> None:
+        """Кликает по кнопке регистрации"""
+        self.click(self.locators.REGISTER_BUTTON)
 
-    def register_user(self, user_data):
+    @allure.step("Получить текст сообщения об успехе")
+    def get_success_message(self) -> str:
+        """Возвращает текст сообщения после успешной регистрации
+
+        Returns:
+            str: Текст сообщения
+        """
+        return self.get_text(self.locators.SUCCESS_MESSAGE)
+
+    @allure.step("Выполнить полную регистрацию пользователя")
+    def register_user(self, user_data: Dict[str, str]) -> None:
+        """Выполняет полный сценарий регистрации пользователя
+
+        Args:
+            user_data (Dict[str, str]): Словарь с ключами: "first_name", "last_name", "email", "password"
+        """
         self.navigate_to_sample_form()
         self.fill_personal_info(
             user_data["first_name"],
@@ -60,7 +131,7 @@ class BankingPage(BasePage):
         self.select_hobby_sports()
 
         longest_hobby = self.get_longest_hobby_word()
-        about_text = f"{longest_hobby}"
+        about_text = longest_hobby
         self.fill_about_yourself(about_text)
 
         self.click_register()
