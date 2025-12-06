@@ -46,5 +46,12 @@ class ResursesPage(BasePage):
             resources_menu,
         )
 
+    @allure.step("Клик на элемент 'Resources'")
+    def click_resources(self):
+        """Кликает на элемент Resources"""
         self.click(self.locator.RESOURCES)
+
+    @allure.step("Клик на элемент Practice Site 1")
+    def click_practice_site_1(self):
+        """Кликает на элемент Practice Site 1"""
         self.click(self.locator.PRACTICE_SITE_1)

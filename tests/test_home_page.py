@@ -3,7 +3,9 @@ import allure
 
 @allure.epic("Навигация")
 @allure.feature("Главное меню")
-@allure.story("Пользователь переходит в Practice Site через Resources в Practice Site 2 потом Home")
+@allure.story(
+    "Пользователь переходит в Practice Site через Resources в Practice Site 2 потом Home"
+)
 class TestHome:
     @allure.severity(allure.severity_level.NORMAL)
     def test_resurses(self, home_page):

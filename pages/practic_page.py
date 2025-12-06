@@ -47,7 +47,18 @@ class PracticPage(BasePage):
             resources_menu,
         )
 
+    @allure.step("Клик на элемент Resources")
+    def click_resources(self):
         self.click(self.locator.RESOURCES)
+
+    @allure.step("Клик на элемент Practice Site 1")
+    def click_practice_site_1(self):
         self.click(self.locator.PRACTICE_SITE_1)
+
+    @allure.step("Клик на элемент BUTTON")
+    def click_button(self):
         self.click(self.locator.BUTTON)
+
+    @allure.step("Клик на элемент BUTTON RESIZABLE")
+    def click_button_resizable(self):
         self.click(self.locator.BUTTON_RESIZABLE)

@@ -3,7 +3,6 @@ from selenium.webdriver.remote.webdriver import WebDriver
 
 from config import BASE_URL, REGISTRATION_APP_PATH
 from locators.login_page_locator import LoginPageLocators
-
 from .base_page import BasePage
 
 
@@ -31,31 +30,17 @@ class LoginPage(BasePage):
         self.open_url(self.URL)
         return self
 
-    @allure.step("Ввести имя пользователя: {username}")
-    def enter_username(self, username: str) -> None:
-        """Вводит имя пользователя в соответствующее поле
+    @allure.step("Заполнить форму входа с username='{username}', password='{password}' и description='{desc}'")
+    def fill_login_form(self, username: str, password: str, desc: str) -> None:
+        """Заполняет поля формы входа: имя пользователя, пароль и описание
 
         Args:
             username (str): имя пользователя
-        """
-        self.send_keys(self.locators.USERNAME_INPUT, username)
-
-    @allure.step("Ввести пароль: {'*' * len(password)}")
-    def enter_password(self, password: str) -> None:
-        """Вводит пароль
-
-        Args:
-            password (str): пароль для входа
-        """
-        self.send_keys(self.locators.PASSWORD_INPUT, password)
-
-    @allure.step("Ввести описание пользователя: {desc}")
-    def enter_username_description(self, desc: str) -> None:
-        """Вводит описание (комментарий) к пользователю
-
-        Args:
+            password (str): пароль
             desc (str): описание пользователя
         """
+        self.send_keys(self.locators.USERNAME_INPUT, username)
+        self.send_keys(self.locators.PASSWORD_INPUT, password)
         self.send_keys(self.locators.USERNAME_DESCRIPTION, desc)
 
     @allure.step("Нажать кнопку 'Login'")
@@ -86,7 +71,7 @@ class LoginPage(BasePage):
         """Выполняет клик по кнопке выхода из системы"""
         self.click(self.locators.LOGOUT_BUTTON)
 
-    @allure.step("Выполнить полный вход с username='{username}', description='{desc}'")
+    @allure.step("Выполнить полный вход с username='{username}', password='{password}', description='{desc}'")
     def login(self, username: str, password: str, desc: str) -> None:
         """Выполняет полный сценарий входа: заполняет все поля и нажимает 'Login'
 
@@ -95,9 +80,7 @@ class LoginPage(BasePage):
             password (str): пароль
             desc (str): описание пользователя
         """
-        self.enter_username(username)
-        self.enter_password(password)
-        self.enter_username_description(desc)
+        self.fill_login_form(username, password, desc)
         self.click_login()
 
     @allure.step("Проверить, видна ли вся форма входа")
@@ -105,7 +88,7 @@ class LoginPage(BasePage):
         """Проверяет, что все поля формы входа видны одновременно
 
         Returns:
-            bool: True, если поле видно если нет то False
+            bool: True, если все поля видны, иначе False
         """
         return (
             self.is_element_visible(self.locators.USERNAME_INPUT)

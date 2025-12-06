@@ -40,6 +40,14 @@ class HomePage(BasePage):
             resources_menu,
         )
 
+    @allure.step("Клик на элемент Resources")
+    def click_resources(self):
         self.click(self.locators.RESOURCES)
+
+    @allure.step("Клик на элемент Practice Site 2")
+    def click_practice_site_2(self):
         self.click(self.locators.PRACTICE_SITE_2)
+
+    @allure.step("Клик на элемент Home")
+    def click_button_home(self):
         self.click(self.locators.HOME)

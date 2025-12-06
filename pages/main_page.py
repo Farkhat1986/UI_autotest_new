@@ -33,51 +33,15 @@ class MainPage(BasePage):
         self.open_url(self.URL)
         return self
 
-    @allure.step("Проверить, видна ли контактная информация в шапке")
-    def is_header_contact_visible(self) -> bool:
-        """Проверяет видимость контактной информации в верхнем хедере
+    @allure.step("Проверить, видимость элемента")
+    def is_visible(self, locator) -> bool:
+        return self.is_element_visible(locator)
 
-        Returns:
-            bool: True, если поле видно если нет то False
-        """
-        return self.is_element_visible(self.locators.HEADER_CONTACT)
+    @allure.step("Получить количество элементов по локатору")
+    def count_elements(self, locator) -> int:
+        return len(self.driver.find_elements(*locator))
 
-    @allure.step("Получить количество номеров телефонов в шапке")
-    def get_phone_numbers_count(self) -> int:
-        """Считает количество телефонных номеров в хедере
-
-        Returns:
-            int: количество найденных элементов с телефонами
-        """
-        return len(self.driver.find_elements(*self.locators.PHONE_NUMBERS))
-
-    @allure.step("Получить количество ссылок на соцсети в шапке")
-    def get_social_links_count(self) -> int:
-        """Считает количество иконок/ссылок на социальные сети в хедере
-
-        Returns:
-            int: количество найденных ссылок
-        """
-        return len(self.driver.find_elements(*self.locators.SOCIAL_LINKS))
-
-    @allure.step("Проверить, присутствует ли ссылка на Skype в шапке")
-    def is_skype_link_present(self) -> bool:
-        """Проверяет наличие ссылки на Skype в хедере
-
-        Returns:
-            bool: True, если поле видно если нет то False
-        """
-        return self.is_element_present(self.locators.SKYPE_LINK)
-
-    @allure.step("Проверить, присутствует ли ссылка на Email в шапке")
-    def is_email_link_present(self) -> bool:
-        """Проверяет наличие email в хедере
-
-        Returns:
-            bool: True, если поле видно если нет то False
-        """
-        return self.is_element_present(self.locators.EMAIL_LINK)
-
+    #
     @allure.step("Проверить, виден ли основной блок навигации")
     def is_navigation_block_visible(self) -> bool:
         """Проверяет видимость основного навигационного блока
@@ -132,24 +96,30 @@ class MainPage(BasePage):
         """
         return len(self.driver.find_elements(*self.locators.FOOTER_PHONES))
 
+    # Информация из header
+
     @allure.step("Получить количество email в футере")
-    def get_footer_emails_count(self) -> int:
-        """Считает количество email-адресов в футере
+    def is_header_info_contact_visible(self, directions: str) -> None:
+        if directions == "next":
+            self.click(self.locators.COURSE_SLIDER_NEXT)
+        elif directions == "prev":
+            self.click(self.locators.COURSE_SLIDER_PREV)
+        else:
+            raise ValueError("Неверно, используйте 'next' или 'prev'")
 
-        Returns:
-            int: количество найденных email
+    @allure.step("Нажать кнопку в слайдере курсов")
+    def click_course_slider(self, direction: str) -> None:
+        """Выполняет клик по кнопке слайдера курсов
+
+        Args:
+            direction (str): направление слайдера, может быть 'next' или 'prev'
         """
-        return len(self.driver.find_elements(*self.locators.FOOTER_EMAILS))
-
-    @allure.step("Нажать кнопку 'Next' в слайдере курсов")
-    def click_course_slider_next(self) -> None:
-        """Выполняет клик по кнопке 'Next' в карусели курсов"""
-        self.click(self.locators.COURSE_SLIDER_NEXT)
-
-    @allure.step("Нажать кнопку 'Prev' в слайдере курсов")
-    def click_course_slider_prev(self) -> None:
-        """Выполняет клик по кнопке 'Prev' в карусели курсов"""
-        self.click(self.locators.COURSE_SLIDER_PREV)
+        if direction == "next":
+            self.click(self.locators.COURSE_SLIDER_NEXT)
+        elif direction == "prev":
+            self.click(self.locators.COURSE_SLIDER_PREV)
+        else:
+            raise ValueError("Неверно, используйте 'next' или 'prev'")
 
     @allure.step("Получить заголовки активных слайдов курсов")
     def get_active_course_slides(self) -> List[str]:

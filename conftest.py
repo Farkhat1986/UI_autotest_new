@@ -4,9 +4,15 @@ import pytest
 from utils.driver_factory import create_driver
 
 
+def pytest_addoption(parser):
+    parser.addoption(
+        "--browser", action="store", default="chrome", help="chrome или firefox"
+    )
+    parser.addoption("--remote", action="store_true", help="Запуск через Selenium Grid")
+
+
 @pytest.hookimpl(hookwrapper=True, tryfirst=True)
 def pytest_runtest_makereport(item, call):
-    """Определения статуса теста"""
     outcome = yield
     rep = outcome.get_result()
     setattr(item, "rep_call", rep)
@@ -14,8 +20,11 @@ def pytest_runtest_makereport(item, call):
 
 @pytest.fixture
 def driver(request):
-    """Фикстура WebDriver с автоматическим скриншотом при падении"""
-    driver = create_driver()
+    browser = request.config.getoption("--browser")
+    remote = request.config.getoption("--remote")
+
+    driver = create_driver(browser=browser, remote=remote)
+
     yield driver
 
     if hasattr(request.node, "rep_call") and request.node.rep_call.failed:

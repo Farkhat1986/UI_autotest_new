@@ -7,7 +7,9 @@ from locators.main_page_locator import MainPageLocators
 @allure.feature("Проверка UI-элементов")
 class TestMainPage:
 
-    @allure.story("Проверка видимости основных структурных элементов при загрузке страницы")
+    @allure.story(
+        "Проверка видимости основных структурных элементов при загрузке страницы"
+    )
     @allure.severity(allure.severity_level.CRITICAL)
     def test_main_page_elements_visibility(self, main_page):
         """Проверка открытия страницы и отображения основных элементов"""
@@ -31,36 +33,46 @@ class TestMainPage:
         """Проверка хедера с контактной информацией"""
         main_page.open()
 
-        assert main_page.get_phone_numbers_count(), "Номера телефонов не найдены"
-        assert main_page.is_skype_link_present(), "Ссылка на Skype не найдена"
-        assert main_page.is_email_link_present(), "Ссылка на email не найдена"
-        assert main_page.get_social_links_count(), "Ссылки на соцсети не найдены"
+        assert main_page.is_visible(main_page.locators.HEADER_CONTACT)
+        assert main_page.is_visible(
+            main_page.locators.SKYPE_LINK
+        ), "Ссылка на Skype не найдена"
+        assert main_page.is_visible(
+            main_page.locators.EMAIL_LINK
+        ), "Ссылка на email не найдена"
+
+        assert (
+            main_page.count_elements(main_page.locators.PHONE_NUMBERS) > 0
+        ), "Номера телефонов не найдены"
+        assert (
+            main_page.count_elements(main_page.locators.SOCIAL_LINKS) == 5
+        ), "Ссылки на соцсети не найдены"
 
     @allure.story("Проверка навигации в слайдере курсов: переключение слайдов работает")
     @allure.severity(allure.severity_level.NORMAL)
     def test_courses_slider_navigation(self, main_page):
         """Проверка кнопок навигации слайдера курсов"""
+
         main_page.open()
         self.locators = MainPageLocators()
 
         main_page.scroll_to_element_el(self.locators.POPULAR_COURSES_SECTION)
 
         initial_slides = main_page.get_active_course_slides()
-
         assert initial_slides, "Не найдено ни одного слайда"
 
-        main_page.click_course_slider_next()
+        with allure.step("Нажать кнопку 'Next' в слайдере курсов"):
+            main_page.click_course_slider("next")
 
         slides_after_next = main_page.get_active_course_slides()
-
         assert (
             initial_slides != slides_after_next
         ), "Слайды не изменились после клика 'вперед'"
 
-        main_page.click_course_slider_prev()
+        with allure.step("Нажать кнопку 'Prev' в слайдере курсов"):
+            main_page.click_course_slider("prev")
 
         slides_after_prev = main_page.get_active_course_slides()
-
         assert (
             initial_slides != slides_after_prev
         ), "Слайды не изменились после клика 'вперед'"
@@ -72,9 +84,9 @@ class TestMainPage:
         main_page.open()
         main_page.scroll_to_element(self.locators.POPULAR_COURSES_SECTION)
 
-        main_page.click_course_slider_next()
+        main_page.click_course_slider("next")
 
-        main_page.click_course_slider_prev()
+        main_page.click_course_slider("prev")
 
         assert True
 

@@ -84,21 +84,6 @@ class BasePage:
         element = self.find_element(locator)
         return element.text
 
-    def is_element_present(self, locator: Tuple[str, str]) -> bool:
-        """Проверяет, присутствует ли элемент в DOM
-
-        Args:
-            locator (Tuple[str, str]): локатор элемента
-
-        Returns:
-            bool: True если элемент найден если нет то False
-        """
-        try:
-            self.find_element(locator)
-            return True
-        except TimeoutException:
-            return False
-
     def is_element_visible(self, locator: Tuple[str, str]) -> bool:
         """Проверяет, виден ли элемент на странице
 
