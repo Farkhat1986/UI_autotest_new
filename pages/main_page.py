@@ -33,10 +33,6 @@ class MainPage(BasePage):
         self.open_url(self.URL)
         return self
 
-    @allure.step("Проверить, видимость элемента")
-    def is_visible(self, locator) -> bool:
-        return self.is_element_visible(locator)
-
     @allure.step("Получить количество элементов по локатору")
     def count_elements(self, locator) -> int:
         return len(self.driver.find_elements(*locator))

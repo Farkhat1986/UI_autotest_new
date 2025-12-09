@@ -15,7 +15,20 @@ def pytest_addoption(parser):
 def pytest_runtest_makereport(item, call):
     outcome = yield
     rep = outcome.get_result()
+
     setattr(item, "rep_call", rep)
+
+    if rep.when == "call" and rep.failed:
+        if "driver" in item.funcargs:
+            driver = item.funcargs["driver"]
+            try:
+                allure.attach(
+                    driver.get_screenshot_as_png(),
+                    name="Скриншот при падении",
+                    attachment_type=allure.attachment_type.PNG,
+                )
+            except Exception as e:
+                print(f"Не удалось прикрепить скриншот: {e}")
 
 
 @pytest.fixture
@@ -24,17 +37,5 @@ def driver(request):
     remote = request.config.getoption("--remote")
 
     driver = create_driver(browser=browser, remote=remote)
-
     yield driver
-
-    if hasattr(request.node, "rep_call") and request.node.rep_call.failed:
-        try:
-            allure.attach(
-                driver.get_screenshot_as_png(),
-                name="screenshot_on_failure",
-                attachment_type=allure.attachment_type.PNG,
-            )
-        except Exception as e:
-            print(f"Не удалось сделать скриншот: {e}")
-
     driver.quit()
