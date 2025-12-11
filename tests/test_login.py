@@ -65,4 +65,3 @@ class TestLogin:
         assert (
             login_page.is_login_form_visible()
         ), "Форма логина не отображается после разлогирования"
-

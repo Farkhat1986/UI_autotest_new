@@ -91,7 +91,7 @@ class BasePage:
             locator (Tuple[str, str]): локатор элемента
 
         Returns:
-            bool: True если элемент найден если нет то False
+            bool: True если элемент найден и виден, иначе False
         """
         try:
             self.find_visible_element(locator)
@@ -106,48 +106,56 @@ class BasePage:
             locator (Tuple[str, str]): локатор элемента
         """
         element = self.find_element(locator)
-        self.execute_script(
+        self.driver.execute_script(
             "arguments[0].scrollIntoView({ block: 'center', behavior: 'smooth' });",
             element,
         )
 
     def scroll_to_bottom(self) -> None:
         """Прокручивает страницу до самого низа"""
-        self.execute_script(
+        self.driver.execute_script(
             "window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });"
         )
 
-    def scroll(self, pause_time: float = 1) -> None:
+    def scroll(self, pause_time: float = 1, max_attempts: int = 2) -> None:
         """Прокручивает страницу до конца с учётом динамической подгрузки контента
 
         Args:
-            pause_time (float): время ожидания между прокрутками
+            pause_time (float): время ожидания между прокрутками (в секундах)
+            max_attempts (int): максимальное количество попыток прокрутки
         """
-        while True:
-            self.execute_script(
+        attempts = 0
+        while attempts < max_attempts:
+            self.driver.execute_script(
                 "window.scrollTo(0, Math.max(document.body.scrollHeight, document.documentElement.scrollHeight));"
             )
 
-            current_height = self.execute_script(
+            current_height = self.driver.execute_script(
                 "return Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);"
             )
+
             time.sleep(pause_time)
-            new_height = self.execute_script(
+
+            new_height = self.driver.execute_script(
                 "return Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);"
             )
+
             if new_height == current_height:
                 break
 
+            attempts += 1
+
     def execute_script(self, script: str, *args) -> Any:
-        """Выполняет код в контексте текущей страницы
+        """Выполняет JavaScript-код в контексте текущей страницы
 
         Args:
-            *args: Аргументы, передаваемые в скрипт
+            script (str): JavaScript-код для выполнения
+            *args: аргументы, передаваемые в скрипт
 
         Returns:
-            Любое значение, возвращённое скриптом
+            Любое значение, возвращённое JavaScript-кодом
         """
-        return self.execute_script(script, *args)
+        return self.driver.execute_script(script, *args)
 
     def open_url(self, url: str) -> None:
         """Открывает указанный URL в браузере

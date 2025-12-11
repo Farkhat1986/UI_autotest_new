@@ -3,6 +3,7 @@ from selenium.webdriver.remote.webdriver import WebDriver
 
 from config import BASE_URL, REGISTRATION_APP_PATH
 from locators.login_page_locator import LoginPageLocators
+
 from .base_page import BasePage
 
 
@@ -30,7 +31,9 @@ class LoginPage(BasePage):
         self.open_url(self.URL)
         return self
 
-    @allure.step("Заполнить форму входа с username='{username}', password='{password}' и description='{desc}'")
+    @allure.step(
+        "Заполнить форму входа с username='{username}', password='{password}' и description='{desc}'"
+    )
     def fill_login_form(self, username: str, password: str, desc: str) -> None:
         """Заполняет поля формы входа: имя пользователя, пароль и описание
 
@@ -71,7 +74,9 @@ class LoginPage(BasePage):
         """Выполняет клик по кнопке выхода из системы"""
         self.click(self.locators.LOGOUT_BUTTON)
 
-    @allure.step("Выполнить полный вход с username='{username}', password='{password}', description='{desc}'")
+    @allure.step(
+        "Выполнить полный вход с username='{username}', password='{password}', description='{desc}'"
+    )
     def login(self, username: str, password: str, desc: str) -> None:
         """Выполняет полный сценарий входа: заполняет все поля и нажимает 'Login'
 

@@ -4,7 +4,13 @@ from selenium.webdriver.common.by import By
 class PracticPageLocators:
     """Локаторы для Practic Page"""
 
-    RESOURCES = (By.LINK_TEXT, "Resources")
-    PRACTICE_SITE_1 = (By.LINK_TEXT, "Practice Site 1")
-    BUTTON = (By.LINK_TEXT, "ENTER TO THE TESTING WEBSITE")
-    BUTTON_RESIZABLE = (By.LINK_TEXT, "Resizable")
+    RESOURCES = (
+        By.XPATH,
+        "//span[@class='menu-text' and text()='Resources']/ancestor::a",
+    )
+    PRACTICE_SITE_1 = (
+        By.XPATH,
+        "//span[@class='menu-text' and text()='Practice Site 1']/ancestor::a",
+    )
+    BUTTON = (By.CSS_SELECTOR, "[data-testid='enter-testing-site']")
+    BUTTON_RESIZABLE = (By.CSS_SELECTOR, "[data-testid='resizable-link']")

@@ -26,5 +26,5 @@ def create_driver(browser="chrome", remote=False):
     if browser == "chrome":
         return webdriver.Chrome(options=options)
 
-    else:  # firefox
+    else:
         return webdriver.Firefox(options=options)

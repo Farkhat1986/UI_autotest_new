@@ -4,5 +4,11 @@ from selenium.webdriver.common.by import By
 class TestPageLocators:
     """Локаторы для Test Page"""
 
-    RESOURCES = (By.LINK_TEXT, "Resources")
-    PRACTICE_SITE_2 = (By.LINK_TEXT, "Practice Site 2")
+    RESOURCES = (
+        By.XPATH,
+        "//span[@class='menu-text' and text()='Resources']/ancestor::a",
+    )
+    PRACTICE_SITE_2 = (
+        By.XPATH,
+        "//a[contains(@href, 'protractor-angularjs-practice-website.html')]",
+    )
