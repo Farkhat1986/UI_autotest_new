@@ -34,7 +34,7 @@ class CookiesPage(BasePage):
 
         Note:
             Метод не проверяет результат входа только отправляет форму
-            Для проверки успешной авторизации используйте отдельные проверки
+            Для проверки успешной авторизации используйте отдельные провер
         """
         self.send_keys(self.locators.USERNAME_INPUT, username)
         self.send_keys(self.locators.PASSWORD_INPUT, password)
