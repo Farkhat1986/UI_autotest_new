@@ -7,4 +7,4 @@ class CookiesPageLocators:
     USERNAME_INPUT = (By.NAME, "login")
     PASSWORD_INPUT = (By.NAME, "psw")
     LOGIN_BUTTON = (By.XPATH, "//input[@value='Вход']")
-    PERSONAL_PAGE_LINK = (By.XPATH, "//h2[text()='Практическое владение языком SQL']")
+    PERSONAL_PAGE_LINK = (By.XPATH, "//a[@href='/personal.php']")
