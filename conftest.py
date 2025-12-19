@@ -31,10 +31,24 @@ def pytest_runtest_makereport(item, call):
                 print(f"Не удалось прикрепить скриншот: {e}")
 
 
+#@pytest.fixture
+#def drivers(request):
+#    browser = request.config.getoption("--browser")
+#    remote = request.config.getoption("--remote")
+#    driver = DriverFactory.create_driver(browser=browser, remote=remote)
+
+#    driver = create_driver(browser=browser, remote=remote)
+#    yield drivers
+#    drivers.quit()
+
 @pytest.fixture
 def driver(request):
-    browser = request.config.getoption("--browser")
-    remote = request.config.getoption("--remote")
+    if hasattr(request, "param") and isinstance(request.param, dict):
+        browser = request.param.get("browser", "chrome")
+        remote = request.param.get("remote", False)
+    else:
+        browser = request.config.getoption("--browser")
+        remote = request.config.getoption("--remote")
 
     driver = create_driver(browser=browser, remote=remote)
     yield driver

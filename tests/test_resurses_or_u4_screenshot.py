@@ -15,4 +15,6 @@ class TestResurses:
         resurses_page.navigate_to_resurses()
 
         page_title = resurses_page.driver.title
-        assert "Welcome to the Test Site Mo INFORMATION", f"Заголовок не содержит {page_title}"
+        assert (
+            "Welcome to the Test Site Mo INFORMATION"
+        ), f"Заголовок не содержит {page_title}"

@@ -1,6 +1,7 @@
 import time
 from typing import Any, Tuple
 
+import allure
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
@@ -164,3 +165,15 @@ class BasePage:
             url (str): полный URL для открытия
         """
         self.driver.get(url)
+
+    @allure.step("Снимаем фокус с активного элемента поля ввода")
+    def remove_focus(self) -> None:
+        """Убирает фокус с любого активного элемента на странице"""
+        self.driver.execute_script("document.activeElement?.blur();")
+
+    @allure.step("Проверяем наличие прокрутки на странице")
+    def scrollbar(self) -> bool:
+        """Возвращает True, если на странице есть вертикальная прокрутка"""
+        return self.driver.execute_script(
+            "return document.documentElement.scrollHeight > window.innerHeight;"
+        )
