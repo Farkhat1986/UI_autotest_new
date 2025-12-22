@@ -27,8 +27,8 @@ class TestExecutorOnLoginPage:
 
         has_scroll = login_page.scrollbar()
 
-        with allure.step(f"Проверка наличия вертикальной прокрутки: {has_scroll}"):
-            assert isinstance(has_scroll, bool), "Результат должен быть булевым"
+        with allure.step("Проверка наличия вертикальной прокрутки"):
+            assert has_scroll is True, "На странице входа должна быть вертикальная прокрутка"
 
         allure.attach(
             driver.get_screenshot_as_png(),
