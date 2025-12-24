@@ -15,9 +15,8 @@ class TabsPage(BasePage):
         self.locators = TabsPageLocators()
 
     @allure.step("Открыть страницу с iframe")
-    def open(self) -> "TabsPage":
+    def open(self) -> None:
         self.open_url(self.URL)
-        return self
 
     @allure.step("Переключиться во фрейм и нажать ссылку 'New Browser Tab'")
     def open_new_tab_from_iframe(self) -> None:
